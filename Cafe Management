@@ -1,164 +1,277 @@
 import pandas as pd
-df=pd.read_csv("DMart.csv")
-display(df)
+from io import StringIO
+
+data = """Customer_ID,Customer_Name,Age,Gender,Item,Quantity,Unit_Price,Total_Amount,Payment_Method,Order_Type,Visit_Day,Visit_Time,Satisfaction
+1,Anitha 1,19,Female,Juice,1,70,70,Cash,Dine-in,Saturday,Morning,5
+2,Karthik 2,20,Male,Tea,4,40,160,Cash,Dine-in,Friday,Evening,1
+3,Anitha 3,52,Female,French Fries,2,90,180,UPI,Online,Wednesday,Morning,2
+4,Vijay 4,35,Male,Sandwich,3,110,330,UPI,Dine-in,Monday,Afternoon,1
+5,Dinesh 5,34,Male,Pizza,3,220,660,Card,Dine-in,Thursday,Morning,5
+6,Karthik 6,54,Male,Burger,3,150,450,Cash,Online,Tuesday,Afternoon,1
+7,Dinesh 7,42,Female,Latte,1,130,130,Card,Takeaway,Tuesday,Afternoon,3
+8,Swetha 8,22,Male,Latte,3,130,390,Card,Dine-in,Tuesday,Afternoon,4
+9,Anitha 9,38,Male,Burger,2,150,300,Cash,Takeaway,Thursday,Afternoon,1
+10,Sanjay 10,31,Female,Latte,3,130,390,Card,Takeaway,Tuesday,Afternoon,2
+11,Mohan 11,55,Female,Latte,3,130,390,UPI,Takeaway,Tuesday,Morning,5
+12,Rahul 12,21,Male,Pasta,1,180,180,Card,Dine-in,Sunday,Evening,4
+13,Harini 13,42,Female,Cake,1,100,100,UPI,Online,Wednesday,Evening,1
+14,Aravind 14,52,Female,Juice,1,70,70,Cash,Takeaway,Thursday,Morning,4
+15,Ramesh 15,50,Male,Coffee,3,80,240,Cash,Online,Wednesday,Evening,5
+16,Sneha 16,27,Female,Cake,2,100,200,Card,Online,Monday,Evening,3
+17,Meena 17,25,Female,Pasta,1,180,180,Cash,Dine-in,Tuesday,Evening,1
+18,Rahul 18,22,Male,Tea,4,40,160,Card,Takeaway,Friday,Morning,3
+19,Meena 19,31,Male,French Fries,4,90,360,UPI,Online,Saturday,Afternoon,4
+20,Anitha 20,25,Male,French Fries,4,90,360,Cash,Takeaway,Monday,Evening,5
+21,Priya 21,18,Male,Latte,2,130,260,Cash,Dine-in,Monday,Afternoon,1
+22,Vijay 22,35,Female,French Fries,2,90,180,Card,Dine-in,Saturday,Evening,5
+23,Vijay 23,48,Female,Pasta,2,180,360,Cash,Dine-in,Saturday,Afternoon,3
+24,Divya 24,47,Male,Sandwich,4,110,440,Cash,Takeaway,Saturday,Afternoon,1
+25,Rahul 25,30,Female,Latte,2,130,260,UPI,Dine-in,Wednesday,Afternoon,2
+26,Priya 26,53,Male,Tea,4,40,160,Card,Online,Sunday,Morning,1
+27,Nithya 27,44,Female,Latte,2,130,260,Cash,Takeaway,Monday,Morning,4
+28,Meena 28,34,Female,Coffee,4,80,320,UPI,Online,Saturday,Evening,4
+29,Priya 29,36,Male,Cappuccino,2,120,240,Card,Online,Friday,Morning,3
+30,Ramesh 30,55,Female,Coffee,1,80,80,Card,Dine-in,Monday,Evening,1
+31,Sanjay 31,22,Male,Cappuccino,1,120,120,Cash,Online,Tuesday,Evening,5
+32,Surya 32,44,Female,Coffee,1,80,80,Cash,Online,Saturday,Afternoon,2
+33,Dinesh 33,26,Female,Burger,4,150,600,UPI,Dine-in,Monday,Afternoon,5
+34,Ramesh 34,22,Male,Cake,1,100,100,UPI,Dine-in,Wednesday,Morning,2
+35,Swetha 35,28,Female,Pizza,3,220,660,Card,Takeaway,Friday,Evening,5
+36,Surya 36,24,Male,Coffee,3,80,240,Cash,Dine-in,Saturday,Evening,2
+37,Vijay 37,31,Female,Burger,3,150,450,Card,Online,Sunday,Afternoon,5
+38,Pooja 38,21,Male,Pasta,3,180,540,UPI,Dine-in,Monday,Afternoon,2
+39,Swetha 39,28,Female,Juice,3,70,210,Card,Takeaway,Friday,Morning,1
+40,Keerthi 40,52,Male,Tea,2,40,80,Card,Online,Tuesday,Afternoon,2
+41,Keerthi 41,41,Male,Coffee,3,80,240,Cash,Online,Tuesday,Evening,1
+42,Sneha 42,27,Male,Pizza,4,220,880,Cash,Takeaway,Monday,Morning,3
+43,Divya 43,35,Male,Sandwich,2,110,220,UPI,Dine-in,Sunday,Afternoon,2
+44,Anitha 44,40,Female,Latte,4,130,520,Cash,Dine-in,Saturday,Morning,4
+45,Keerthi 45,22,Female,Pizza,3,220,660,Card,Online,Thursday,Evening,5
+46,Sneha 46,25,Female,Pizza,1,220,220,Card,Takeaway,Monday,Morning,5
+47,Harini 47,38,Female,Sandwich,3,110,330,Card,Dine-in,Thursday,Evening,2
+48,Ramesh 48,45,Male,Burger,1,150,150,Card,Online,Saturday,Evening,2
+49,Harini 49,22,Female,Pizza,4,220,880,UPI,Online,Sunday,Morning,3
+50,Sanjay 50,44,Female,French Fries,3,90,270,Card,Takeaway,Friday,Morning,2
+51,Sanjay 51,29,Female,Sandwich,4,110,440,Card,Dine-in,Wednesday,Afternoon,2
+52,Dinesh 52,47,Female,Sandwich,3,110,330,Card,Dine-in,Friday,Afternoon,2
+53,Karthik 53,36,Female,Juice,1,70,70,Cash,Online,Wednesday,Morning,2
+54,Nithya 54,20,Male,Cappuccino,1,120,120,Card,Dine-in,Thursday,Afternoon,5
+55,Anitha 55,49,Female,Latte,4,130,520,Cash,Online,Saturday,Morning,1
+56,Priya 56,29,Female,Sandwich,2,110,220,Card,Dine-in,Sunday,Morning,4
+57,Dinesh 57,51,Female,Cappuccino,4,120,480,Card,Online,Friday,Afternoon,5
+58,Surya 58,48,Female,Pasta,2,180,360,Cash,Online,Wednesday,Evening,4
+59,Karthik 59,35,Female,Juice,2,70,140,Card,Takeaway,Tuesday,Afternoon,3
+60,Anitha 60,26,Male,Pizza,1,220,220,UPI,Online,Tuesday,Evening,2
+61,Swetha 61,44,Female,Tea,4,40,160,UPI,Takeaway,Monday,Morning,4
+62,Nithya 62,54,Female,Sandwich,1,110,110,Cash,Takeaway,Wednesday,Afternoon,4
+63,Surya 63,49,Male,French Fries,2,90,180,UPI,Takeaway,Monday,Afternoon,3
+64,Rahul 64,28,Female,Juice,4,70,280,Card,Online,Monday,Afternoon,5
+65,Rahul 65,23,Female,Cake,1,100,100,UPI,Dine-in,Monday,Afternoon,4
+66,Aravind 66,47,Female,Pizza,2,220,440,UPI,Takeaway,Sunday,Afternoon,3
+67,Keerthi 67,19,Male,Tea,4,40,160,Cash,Online,Monday,Evening,1
+68,Harini 68,30,Male,Coffee,2,80,160,Cash,Dine-in,Tuesday,Afternoon,1
+69,Keerthi 69,47,Female,Cake,2,100,200,Cash,Online,Friday,Evening,1
+70,Meena 70,24,Male,Cappuccino,3,120,360,Card,Online,Thursday,Afternoon,2
+71,Harini 71,24,Female,Tea,2,40,80,Cash,Online,Sunday,Morning,3
+72,Ramesh 72,41,Male,French Fries,4,90,360,Card,Takeaway,Monday,Afternoon,4
+73,Rahul 73,41,Female,Tea,4,40,160,UPI,Dine-in,Saturday,Evening,3
+74,Mohan 74,47,Female,Cake,4,100,400,UPI,Takeaway,Sunday,Morning,1
+75,Mohan 75,33,Female,Burger,4,150,600,Card,Online,Thursday,Afternoon,1
+76,Vijay 76,29,Female,Pasta,3,180,540,UPI,Takeaway,Wednesday,Afternoon,5
+77,Karthik 77,51,Male,Burger,1,150,150,Cash,Online,Thursday,Afternoon,5
+78,Arun 78,49,Female,Latte,4,130,520,Cash,Takeaway,Tuesday,Afternoon,2
+79,Pooja 79,48,Female,Burger,3,150,450,Card,Online,Wednesday,Afternoon,4
+80,Divya 80,34,Male,Burger,3,150,450,Card,Dine-in,Wednesday,Morning,5
+81,Surya 81,31,Female,Cappuccino,2,120,240,Card,Online,Sunday,Evening,5
+82,Anitha 82,30,Female,Burger,1,150,150,UPI,Dine-in,Wednesday,Morning,5
+83,Swetha 83,20,Male,Cappuccino,3,120,360,UPI,Online,Tuesday,Evening,4
+84,Nithya 84,54,Female,Tea,1,40,40,UPI,Takeaway,Wednesday,Morning,1
+85,Sanjay 85,25,Male,Burger,4,150,600,UPI,Dine-in,Friday,Evening,1
+86,Karthik 86,54,Female,Cappuccino,2,120,240,Cash,Dine-in,Friday,Afternoon,5
+87,Dinesh 87,51,Female,Cake,2,100,200,UPI,Takeaway,Sunday,Evening,4
+88,Vijay 88,24,Male,Burger,1,150,150,UPI,Online,Monday,Morning,2
+89,Pooja 89,28,Male,Cappuccino,1,120,120,UPI,Online,Friday,Afternoon,3
+90,Dinesh 90,36,Female,Coffee,2,80,160,Cash,Online,Tuesday,Afternoon,5
+91,Swetha 91,45,Male,Juice,2,70,140,Cash,Online,Tuesday,Afternoon,2
+92,Harini 92,28,Female,Tea,1,40,40,Card,Online,Wednesday,Afternoon,1
+93,Ramesh 93,43,Female,Pasta,3,180,540,Card,Takeaway,Thursday,Morning,5
+94,Arun 94,38,Female,Coffee,4,80,320,Cash,Dine-in,Saturday,Evening,5
+95,Sneha 95,54,Male,Coffee,3,80,240,UPI,Online,Saturday,Afternoon,3
+96,Nithya 96,49,Male,Cappuccino,4,120,480,UPI,Takeaway,Wednesday,Afternoon,1
+97,Meena 97,44,Female,Cappuccino,3,120,360,Card,Takeaway,Sunday,Evening,1
+98,Aravind 98,38,Female,Pasta,1,180,180,Cash,Takeaway,Sunday,Evening,1
+99,Vijay 99,44,Male,Juice,4,70,280,Card,Takeaway,Friday,Afternoon,4
+100,Meena 100,35,Male,Coffee,2,80,160,UPI,Online,Thursday,Morning,1
+"""
+import pandas as pd
+import matplotlib.pyplot as plt
+from io import StringIO
+
+df = pd.read_csv(StringIO(data))
+
+df.to_csv("cafe_management.csv", index=False)
+
+print("CSV file created successfully!")
+print("Rows:", df.shape[0])
+print("Columns:", df.shape[1])
+
+display(df.head())
+
+print("\n===== DATASET INFORMATION =====")
+print("Shape:", df.shape)
+print("Columns:", df.columns.tolist())
+
+print("\n===== DATA TYPES =====")
+print(df.dtypes)
+
+print("\n===== STATISTICAL SUMMARY =====")
+display(df.describe())
+
+print("\n===== DUPLICATES =====")
+print("Duplicate rows:", df.duplicated().sum())
+
+
+
+print("\n===== MEAN =====")
+print("Age:", round(df["Age"].mean(), 2))
+print("Quantity:", round(df["Quantity"].mean(), 2))
+print("Unit Price:", round(df["Unit_Price"].mean(), 2))
+print("Total Amount:", round(df["Total_Amount"].mean(), 2))
+print("Satisfaction:", round(df["Satisfaction"].mean(), 2))
+
+
+print("\n===== STANDARD DEVIATION =====")
+print("Age:", round(df["Age"].std(), 2))
+print("Quantity:", round(df["Quantity"].std(), 2))
+print("Unit Price:", round(df["Unit_Price"].std(), 2))
+print("Total Amount:", round(df["Total_Amount"].std(), 2))
+print("Satisfaction:", round(df["Satisfaction"].std(), 2))
+
+
+print("\n===== SALES =====")
+print("Total Revenue: ₹", df["Total_Amount"].sum())
+
+
+
+sales = df.groupby("Item")["Total_Amount"].sum().sort_values(ascending=False)
+
+plt.figure(figsize=(10,5))
+sales.plot(kind="bar")
+plt.title("Cafe Sales by Item")
+plt.xlabel("Item")
+plt.ylabel("Total Sales (₹)")
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+
+
+payment = df["Payment_Method"].value_counts()
+
+plt.figure(figsize=(7,7))
+payment.plot(
+    kind="pie",
+    autopct="%1.1f%%",
+    startangle=90
+)
+plt.title("Payment Method Distribution")
+plt.ylabel("")
+plt.show()
+
+
+
+day_order = [
+    "Monday", "Tuesday", "Wednesday",
+    "Thursday", "Friday", "Saturday", "Sunday"
+]
+
+daily_sales = (
+    df.groupby("Visit_Day")["Total_Amount"]
+    .sum()
+    .reindex(day_order)
+)
+
+plt.figure(figsize=(9,5))
+plt.plot(
+    daily_sales.index,
+    daily_sales.values,
+    marker="o"
+)
+plt.title("Cafe Sales by Day")
+plt.xlabel("Visit Day")
+plt.ylabel("Total Sales (₹)")
+plt.xticks(rotation=45)
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+
+plt.figure(figsize=(8,5))
+
+plt.hist(
+    df["Age"],
+    bins=8
+)
+
+plt.title("Customer Age Distribution")
+plt.xlabel("Age")
+plt.ylabel("Number of Customers")
+plt.grid(axis="y")
+plt.show()
+
+
+plt.figure(figsize=(8,5))
+
+plt.scatter(
+    df["Quantity"],
+    df["Total_Amount"]
+)
+
+plt.title("Quantity vs Total Amount")
+plt.xlabel("Quantity")
+plt.ylabel("Total Amount (₹)")
+plt.grid(True)
+plt.show()
 
 import matplotlib.pyplot as plt
-import seaborn as sns
-import pandas as pd
 
+plt.figure(figsize=(7, 5))
 
-# 1. DATA
+plt.boxplot(df["Total_Amount"])
 
-
-months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"]
-sales = [20, 35, 50, 45, 70, 85]
-
-
-# 2. PLOT CUSTOMIZATION
-# Titles, Labels, Colors
-
-
-plt.style.use("seaborn-v0_8-whitegrid")
-
-plt.figure(figsize=(10, 6))
-
-plt.plot(
-    months,
-    sales,
-    color="blue",
-    linewidth=3,
-    linestyle="-",
-    marker="*",
-    markersize=9,
-    markerfacecolor="green",
-    markeredgecolor="white",
-    markeredgewidth=1.5,
-    label="Monthly Sales"
-)
-
-# Title
-plt.title(
-    "Monthly Sales Analysis",
-    fontsize=20,
-    fontweight="bold",
-    color="darkblue",
-    pad=20
-)
-
-# Labels
-plt.xlabel(
-    "Month",
-    fontsize=14,
-    fontweight="bold",
-    color="darkgreen"
-)
-
-plt.ylabel(
-    "Sales",
-    fontsize=14,
-    fontweight="bold",
-    color="darkred"
-)
-
-
-
-# 3. GRIDS AND STYLES
-
-
-plt.grid(
-    True,
-    linestyle="--",
-    linewidth=0.8,
-    alpha=0.6
-)
-
-# Tick customization
-plt.xticks(fontsize=12)
-plt.yticks(fontsize=12)
-
-
-
-# 4. THEMES AND SPACING
-
-
-# Chart background
-plt.gca().set_facecolor("#F5F9FF")
-
-# Remove top and right borders
-plt.gca().spines["top"].set_visible(False)
-plt.gca().spines["right"].set_visible(False)
-
-# Legend
-plt.legend(
-    loc="upper left",
-    fontsize=12,
-    shadow=True
-)
-
-# Add values
-for x, y in zip(months, sales):
-    plt.text(
-        x,
-        y + 2,
-        str(y),
-        ha="center",
-        fontsize=11,
-        fontweight="bold"
-    )
-
-# Spacing
-plt.tight_layout()
+plt.title("Box Plot of Total Amount")
+plt.ylabel("Total Amount (₹)")
+plt.grid(axis="y")
 
 plt.show()
 
+# Heatmap
+numeric_data = df[[
+    "Age",
+    "Quantity",
+    "Unit_Price",
+    "Total_Amount",
+    "Satisfaction"
+]]
 
+correlation = numeric_data.corr()
 
-# 5. ADVANCED PLOT - HEATMAP
+plt.figure(figsize=(8, 6))
+plt.imshow(correlation, cmap="coolwarm", interpolation="nearest")
 
+plt.colorbar()
 
-data = {
-    "Maths": [80, 70, 90, 60, 85],
-    "Python": [85, 75, 95, 65, 90],
-    "Statistics": [78, 72, 88, 70, 82]
-}
-
-df = pd.DataFrame(data)
-
-plt.figure(figsize=(8, 5))
-
-sns.heatmap(
-    df,
-    annot=True,
-    cmap="YlGnBu",
-    linewidths=1
+plt.xticks(
+    range(len(correlation.columns)),
+    correlation.columns,
+    rotation=45
 )
 
-plt.title(
-    "Student Marks Heatmap",
-    fontsize=18,
-    fontweight="bold"
+plt.yticks(
+    range(len(correlation.columns)),
+    correlation.columns
 )
 
-plt.xlabel("Subjects")
-plt.ylabel("Students")
-
+plt.title("Correlation Heatmap")
 plt.tight_layout()
-
-plt.show()
-
-
-# 6. PAIRPLOT
-# Multivariate Visualization
-
-
-data = {
-    "Age": [20, 21, 22, 23, 24, 25],
-    "Study_Hours": [2, 3, 5, 6, 7, 8],
-    "Marks": [50, 55, 65, 70, 80, 90]
-}
-
-df = pd.DataFrame(data)
-
-sns.pairplot(df)
-
 plt.show()
